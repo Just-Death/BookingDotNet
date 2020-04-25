@@ -10,6 +10,7 @@ namespace BookingDotNet.Models
         public int CategoryId { get; set; }
         public string CategoryName { get; set; }
         public string Description { get; set; }
-        public List<Room> Rooms { get; set; }
+
+        public ICollection<Room> Rooms { get; set; }
     }
 }

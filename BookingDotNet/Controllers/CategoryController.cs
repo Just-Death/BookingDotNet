@@ -9,22 +9,22 @@ using BookingDotNet.Models;
 
 namespace BookingDotNet.Controllers
 {
-    public class RoomController : Controller
+    public class CategoryController : Controller
     {
         private readonly AppDbContext _context;
 
-        public RoomController(AppDbContext context)
+        public CategoryController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: Room
+        // GET: Category
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Rooms.ToListAsync());
+            return View(await _context.Categories.ToListAsync());
         }
 
-        // GET: Room/Details/5
+        // GET: Category/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -32,39 +32,39 @@ namespace BookingDotNet.Controllers
                 return NotFound();
             }
 
-            var room = await _context.Rooms
-                .FirstOrDefaultAsync(m => m.RoomId == id);
-            if (room == null)
+            var category = await _context.Categories
+                .FirstOrDefaultAsync(m => m.CategoryId == id);
+            if (category == null)
             {
                 return NotFound();
             }
 
-            return View(room);
+            return View(category);
         }
 
-        // GET: Room/Create
+        // GET: Category/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Room/Create
+        // POST: Category/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("RoomId,RoomQuantity,BookedUserId")] Room room)
+        public async Task<IActionResult> Create([Bind("CategoryId,CategoryName,Description")] Category category)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(room);
+                _context.Add(category);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(room);
+            return View(category);
         }
 
-        // GET: Room/Edit/5
+        // GET: Category/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -72,22 +72,22 @@ namespace BookingDotNet.Controllers
                 return NotFound();
             }
 
-            var room = await _context.Rooms.FindAsync(id);
-            if (room == null)
+            var category = await _context.Categories.FindAsync(id);
+            if (category == null)
             {
                 return NotFound();
             }
-            return View(room);
+            return View(category);
         }
 
-        // POST: Room/Edit/5
+        // POST: Category/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("RoomId,RoomQuantity,BookedUserId")] Room room)
+        public async Task<IActionResult> Edit(int id, [Bind("CategoryId,CategoryName,Description")] Category category)
         {
-            if (id != room.RoomId)
+            if (id != category.CategoryId)
             {
                 return NotFound();
             }
@@ -96,12 +96,12 @@ namespace BookingDotNet.Controllers
             {
                 try
                 {
-                    _context.Update(room);
+                    _context.Update(category);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RoomExists(room.RoomId))
+                    if (!CategoryExists(category.CategoryId))
                     {
                         return NotFound();
                     }
@@ -112,10 +112,10 @@ namespace BookingDotNet.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(room);
+            return View(category);
         }
 
-        // GET: Room/Delete/5
+        // GET: Category/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -123,30 +123,30 @@ namespace BookingDotNet.Controllers
                 return NotFound();
             }
 
-            var room = await _context.Rooms
-                .FirstOrDefaultAsync(m => m.RoomId == id);
-            if (room == null)
+            var category = await _context.Categories
+                .FirstOrDefaultAsync(m => m.CategoryId == id);
+            if (category == null)
             {
                 return NotFound();
             }
 
-            return View(room);
+            return View(category);
         }
 
-        // POST: Room/Delete/5
+        // POST: Category/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var room = await _context.Rooms.FindAsync(id);
-            _context.Rooms.Remove(room);
+            var category = await _context.Categories.FindAsync(id);
+            _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool RoomExists(int id)
+        private bool CategoryExists(int id)
         {
-            return _context.Rooms.Any(e => e.RoomId == id);
+            return _context.Categories.Any(e => e.CategoryId == id);
         }
     }
 }

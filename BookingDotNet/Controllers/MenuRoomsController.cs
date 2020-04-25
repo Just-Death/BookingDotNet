@@ -9,22 +9,23 @@ using BookingDotNet.Models;
 
 namespace BookingDotNet.Controllers
 {
-    public class RoomController : Controller
+    public class MenuRoomsController : Controller
     {
         private readonly AppDbContext _context;
 
-        public RoomController(AppDbContext context)
+        public MenuRoomsController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: Room
+        // GET: MenuRooms
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Rooms.ToListAsync());
+            var appDbContext = _context.MenuRooms.Include(m => m.Menu).Include(m => m.Room);
+            return View(await appDbContext.ToListAsync());
         }
 
-        // GET: Room/Details/5
+        // GET: MenuRooms/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -32,39 +33,45 @@ namespace BookingDotNet.Controllers
                 return NotFound();
             }
 
-            var room = await _context.Rooms
-                .FirstOrDefaultAsync(m => m.RoomId == id);
-            if (room == null)
+            var menuRoom = await _context.MenuRooms
+                .Include(m => m.Menu)
+                .Include(m => m.Room)
+                .FirstOrDefaultAsync(m => m.MenuRoomId == id);
+            if (menuRoom == null)
             {
                 return NotFound();
             }
 
-            return View(room);
+            return View(menuRoom);
         }
 
-        // GET: Room/Create
+        // GET: MenuRooms/Create
         public IActionResult Create()
         {
+            ViewData["MenuId"] = new SelectList(_context.Menus, "MenuId", "MenuId");
+            ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomId");
             return View();
         }
 
-        // POST: Room/Create
+        // POST: MenuRooms/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("RoomId,RoomQuantity,BookedUserId")] Room room)
+        public async Task<IActionResult> Create([Bind("MenuRoomId,MenuId,RoomId")] MenuRoom menuRoom)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(room);
+                _context.Add(menuRoom);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(room);
+            ViewData["MenuId"] = new SelectList(_context.Menus, "MenuId", "MenuId", menuRoom.MenuId);
+            ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomId", menuRoom.RoomId);
+            return View(menuRoom);
         }
 
-        // GET: Room/Edit/5
+        // GET: MenuRooms/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -72,22 +79,24 @@ namespace BookingDotNet.Controllers
                 return NotFound();
             }
 
-            var room = await _context.Rooms.FindAsync(id);
-            if (room == null)
+            var menuRoom = await _context.MenuRooms.FindAsync(id);
+            if (menuRoom == null)
             {
                 return NotFound();
             }
-            return View(room);
+            ViewData["MenuId"] = new SelectList(_context.Menus, "MenuId", "MenuId", menuRoom.MenuId);
+            ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomId", menuRoom.RoomId);
+            return View(menuRoom);
         }
 
-        // POST: Room/Edit/5
+        // POST: MenuRooms/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("RoomId,RoomQuantity,BookedUserId")] Room room)
+        public async Task<IActionResult> Edit(int id, [Bind("MenuRoomId,MenuId,RoomId")] MenuRoom menuRoom)
         {
-            if (id != room.RoomId)
+            if (id != menuRoom.MenuRoomId)
             {
                 return NotFound();
             }
@@ -96,12 +105,12 @@ namespace BookingDotNet.Controllers
             {
                 try
                 {
-                    _context.Update(room);
+                    _context.Update(menuRoom);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RoomExists(room.RoomId))
+                    if (!MenuRoomExists(menuRoom.MenuRoomId))
                     {
                         return NotFound();
                     }
@@ -112,10 +121,12 @@ namespace BookingDotNet.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(room);
+            ViewData["MenuId"] = new SelectList(_context.Menus, "MenuId", "MenuId", menuRoom.MenuId);
+            ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomId", menuRoom.RoomId);
+            return View(menuRoom);
         }
 
-        // GET: Room/Delete/5
+        // GET: MenuRooms/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -123,30 +134,32 @@ namespace BookingDotNet.Controllers
                 return NotFound();
             }
 
-            var room = await _context.Rooms
-                .FirstOrDefaultAsync(m => m.RoomId == id);
-            if (room == null)
+            var menuRoom = await _context.MenuRooms
+                .Include(m => m.Menu)
+                .Include(m => m.Room)
+                .FirstOrDefaultAsync(m => m.MenuRoomId == id);
+            if (menuRoom == null)
             {
                 return NotFound();
             }
 
-            return View(room);
+            return View(menuRoom);
         }
 
-        // POST: Room/Delete/5
+        // POST: MenuRooms/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var room = await _context.Rooms.FindAsync(id);
-            _context.Rooms.Remove(room);
+            var menuRoom = await _context.MenuRooms.FindAsync(id);
+            _context.MenuRooms.Remove(menuRoom);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool RoomExists(int id)
+        private bool MenuRoomExists(int id)
         {
-            return _context.Rooms.Any(e => e.RoomId == id);
+            return _context.MenuRooms.Any(e => e.MenuRoomId == id);
         }
     }
 }

@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 
 namespace BookingDotNet.Models
 {
-    public class Kitchen
+    public class Menu
     {
-        public int KitchenId { get; set; }
+        public int MenuId { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
+
+        public IList<MenuRoom> Orders { get; set; }
     }
 }
