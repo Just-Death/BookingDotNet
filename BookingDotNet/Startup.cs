@@ -42,6 +42,7 @@ namespace BookingDotNet
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
