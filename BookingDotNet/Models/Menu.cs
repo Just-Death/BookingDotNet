@@ -18,6 +18,8 @@ namespace BookingDotNet.Models
 
         [Required(ErrorMessage = "Please enter price")]
         [Display(Name = "Price")]
+        [Range(100, 100000, ErrorMessage = "Please enter correct range between 100 and 100000")]
+        [Price(MinimumPrice = 100.00)]
         public decimal Price { get; set; }
 
         public IList<MenuRoom> Orders { get; set; }
