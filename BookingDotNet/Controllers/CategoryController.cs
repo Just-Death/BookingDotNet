@@ -18,6 +18,23 @@ namespace BookingDotNet.Controllers
             _context = context;
         }
 
+        [HttpPost]
+        public ActionResult VerifyName(string name)
+        {
+            try
+            {
+                return Json(!IsNameExists(name));
+            }
+            catch (Exception ex)
+            {
+                return Json(false);
+            }
+        }
+
+        private bool IsNameExists(string name)
+            => _context.Categories.FirstOrDefault(p => p.CategoryName == name) != null;
+
+
         // GET: Category
         public async Task<IActionResult> Index()
         {
